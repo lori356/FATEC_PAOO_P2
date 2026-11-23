@@ -11,6 +11,11 @@ const funcoes = {
   },
   ComentarioCriado: (comentario) => {
     baseConsulta[comentario.serieId].comentarios.push(comentario)
+  },
+  ComentarioAtualizado: (comentario) => {
+    const comentarios = baseConsulta[comentario.serieId].comentarios
+    const indice = comentarios.findIndex(c => c.id === comentario.id)
+    comentarios[indice] = comentario
   }
 }
 

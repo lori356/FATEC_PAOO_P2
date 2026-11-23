@@ -1,29 +1,34 @@
-const express = require('express');
-const app = express();
-
-app.use(express.json());
+const axios = require('axios')
+const express = require('express')
+const app = express()
+app.use(express.json())
 
 let id = 1
 const series = {}
 
 app.get('/series', (req, res) => {
-    res.json(series);
-});
-
-app.post('/series', (req, res) => {
-    const { titulo, plataforma } = req.body || {}
-    if (!titulo || !plataforma ) {
-        return res.status(400).json({ Erro: 'Título e plataforma são obrigatórios!'})
-    }
-    const serie = { id:id, titulo, plataforma }
-    series[id] = serie
-    id++
-    res.status(201).json(serie);
+  res.json(series)
 })
-const port = 4000;
 
-app.listen(port, () => {
-  console.log(`Séries. Porta ${port}.`)
-});
+app.post('/series', async (req, res) => {
+  const { titulo, plataforma } = req.body || {}
+  if (!titulo || !plataforma) {
+    return res.status(400).json({ erro: 'titulo e plataforma são obrigatórios' })
+  }
+  const serie = { id, titulo, plataforma }
+  series[id] = serie
+  id++
+  await axios.post('http://localhost:10000/eventos', {
+    tipo: 'SerieCriada',
+    dados: serie
+  })
+  res.status(201).json(serie)
+})
 
+app.post('/eventos', (req, res) => {
+  console.log(req.body.tipo)
+  res.end()
+})
 
+const port = 4000
+app.listen(port, () => console.log(`Séries. Porta ${port}.`))

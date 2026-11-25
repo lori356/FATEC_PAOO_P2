@@ -4,6 +4,12 @@ app.use(express.json())
 
 const baseConsulta = {}
 
+const atualizarComentario = (comentario) => {
+  const comentarios = baseConsulta[comentario.serieId].comentarios
+  const indice = comentarios.findIndex(c => c.id === comentario.id)
+  comentarios[indice] = comentario
+}
+
 const funcoes = {
   SerieCriada: (serie) => {
     serie.comentarios = []
@@ -12,11 +18,8 @@ const funcoes = {
   ComentarioCriado: (comentario) => {
     baseConsulta[comentario.serieId].comentarios.push(comentario)
   },
-  ComentarioAtualizado: (comentario) => {
-    const comentarios = baseConsulta[comentario.serieId].comentarios
-    const indice = comentarios.findIndex(c => c.id === comentario.id)
-    comentarios[indice] = comentario
-  }
+  ComentarioAtualizado: atualizarComentario,
+  ComentarioEditado: atualizarComentario
 }
 
 app.get('/series', (req, res) => {

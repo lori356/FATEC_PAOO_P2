@@ -20,7 +20,8 @@ const moderar = async (comentario) => {
 }
 
 const funcoes = {
-  ComentarioCriado: moderar
+  ComentarioCriado: moderar,
+  ComentarioEditado: moderar
 }
 
 app.post('/eventos', async (req, res) => {

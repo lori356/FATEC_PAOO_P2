@@ -1,3 +1,4 @@
+const HOST = "localhost"
 const axios = require('axios')
 const express = require('express')
 const app = express()
@@ -8,7 +9,7 @@ const palavrasProibidas = ['morre', 'final', 'assassino', 'traidor']
 const moderar = async (comentario) => {
   const encontradas = palavrasProibidas.filter(p => comentario.texto.includes(p))
   comentario.status = encontradas.length > 0 ? 'spoiler' : 'liberado'
-  await axios.post('http://localhost:10000/eventos', {
+  await axios.post(`http://${HOST}:10000/eventos`, {
     tipo: 'ComentarioModerado',
     dados: {
       id: comentario.id,
@@ -38,7 +39,7 @@ app.listen(port, async () => {
   console.log(`Moderação. Porta ${port}.`)
   let historico = []
   try {
-    const resp = await axios.get('http://localhost:10000/eventos')
+    const resp = await axios.get(`http://${HOST}:10000/eventos`)
     historico = resp.data
   } catch (e) {
     console.log('Barramento indisponível')

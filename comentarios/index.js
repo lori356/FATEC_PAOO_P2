@@ -1,3 +1,4 @@
+const HOST = "localhost"
 const axios = require('axios')
 const express = require('express')
 const { v4: uuidv4 } = require('uuid')
@@ -17,7 +18,7 @@ app.post('/series/:id/comentarios', async (req, res) => {
   const comentarios = comentariosPorSerieId[req.params.id] || []
   comentarios.push(comentario)
   comentariosPorSerieId[req.params.id] = comentarios
-  await axios.post('http://localhost:10000/eventos', {
+  await axios.post(`http://${HOST}:10000/eventos`, {
     tipo: 'ComentarioCriado',
     dados: comentario
   })
@@ -43,7 +44,7 @@ app.put('/series/:id/comentarios/:idComentario', async (req, res) => {
     serieId: comentario.serieId,
     status: comentario.status
   }
-  await axios.post('http://localhost:10000/eventos', {
+  await axios.post(`http://${HOST}:10000/eventos`, {
     tipo: 'ComentarioEditado',
     dados
   })
@@ -55,7 +56,7 @@ const funcoes = {
     const comentarios = comentariosPorSerieId[dados.serieId]
     const comentario = comentarios.find(c => c.id === dados.id)
     comentario.status = dados.status
-    await axios.post('http://localhost:10000/eventos', {
+    await axios.post(`http://${HOST}:10000/eventos`, {
       tipo: 'ComentarioAtualizado',
       dados: {
         id: comentario.id,

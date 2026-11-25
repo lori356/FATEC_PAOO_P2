@@ -34,4 +34,28 @@ app.post('/eventos', async (req, res) => {
 })
 
 const port = 4300
-app.listen(port, () => console.log(`Moderação. Porta ${port}.`))
+app.listen(port, async () => {
+  console.log(`Moderação. Porta ${port}.`)
+  let historico = []
+  try {
+    const resp = await axios.get('http://localhost:10000/eventos')
+    historico = resp.data
+  } catch (e) {
+    console.log('Barramento indisponível')
+    return
+  }
+  const ultimoEvento = {}
+  const tipos = ['ComentarioCriado', 'ComentarioEditado', 'ComentarioModerado']
+  historico.forEach((evento) => {
+    if (tipos.includes(evento.tipo)) {
+      ultimoEvento[evento.dados.id] = evento
+    }
+  })
+  for (const evento of historico) {
+    try {
+      if (ultimoEvento[evento.dados.id] === evento && evento.tipo !== 'ComentarioModerado') {
+        await funcoes[evento.tipo](evento.dados)
+      }
+    } catch (e) {}
+  }
+})
